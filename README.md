@@ -41,6 +41,18 @@ Preview of generated visualizations (files are in `data/`):
 - Correlation heatmap: `data/correlation_heatmap.png`
 - Top feature importances for the final model: `data/feature_importance.png`
 
+## Visual gallery
+
+The key PNG outputs are shown below for a quick visual overview of the analysis results.
+
+| Salary distribution | Feature distributions |
+| --- | --- |
+| ![Salary distribution](data/salary_distribution.png) | ![Feature distributions](data/features_distribution.png) |
+
+| Correlation heatmap | Feature importance |
+| --- | --- |
+| ![Correlation heatmap](data/correlation_heatmap.png) | ![Feature importance](data/feature_importance.png) |
+
 You can open these images directly from the `data/` folder or view them in the notebook outputs.
 
 ## Modelling approach
@@ -75,6 +87,54 @@ jupyter lab
 
 2. Open `notebooks/book1.ipynb` and run cells top-to-bottom. The notebook generates visualizations into `data/` and saves the final pipeline to `notebooks/best_pipeline.pkl`.
 
+## Running the FastAPI Server
+
+A FastAPI backend is available for making predictions via REST API with an interactive web frontend.
+
+### Start the Uvicorn server:
+
+```powershell
+python -m uvicorn apps.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Or use the provided startup script (Windows):
+
+```powershell
+.\START_SERVER.bat
+```
+
+### Access the application:
+
+Once the server is running, you can access:
+
+- **Frontend**: http://localhost:8000
+- **API Docs (Swagger UI)**: http://localhost:8000/docs
+- **Health Check**: http://localhost:8000/api/v1/health
+
+### Using the API:
+
+Make a POST request to `/api/v1/predict` with developer profile data:
+
+```bash
+curl -X POST "http://localhost:8000/api/v1/predict" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "Age": 29,
+    "EdLevel": "Bachelor'\''s degree",
+    "Employment": "Employed full-time",
+    "WorkExp": 5,
+    "YearsCode": 8,
+    "DevType": "Full-stack developer",
+    "OrgSize": "51-200 employees",
+    "RemoteWork": "Yes",
+    "Industry": "Tech",
+    "Country": "United States",
+    "LanguageHaveWorkedWith": "Python;SQL;JavaScript"
+  }'
+```
+
+The API will return a predicted annual salary in USD.
+
 Using the saved pipeline for predictions
 
 Example Python snippet to load the saved pipeline and run a prediction on a single sample (replace the sample values with realistic feature values matching the notebook preprocessing expectations):
@@ -82,6 +142,7 @@ Example Python snippet to load the saved pipeline and run a prediction on a sing
 ```python
 import joblib
 import pandas as pd
+import numpy as np
 
 # Load pipeline
 pipe = joblib.load('notebooks/best_pipeline.pkl')
@@ -126,7 +187,7 @@ If you prefer a script-based approach, examine `src/model.py` and `src/preproces
 
 ## License & contact
 
-This repository is provided for educational/demo purposes. If you have questions or want help extending this project, open an issue or contact the author.
+This repository is provided for learning purposes bu Cyrus Ndung'u. If you have questions or want help extending this project, open an issue or contact the author.
 
 -- End of README
 
