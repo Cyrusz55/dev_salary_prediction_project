@@ -45,13 +45,13 @@ Preview of generated visualizations (files are in `data/`):
 
 The key PNG outputs are shown below for a quick visual overview of the analysis results.
 
-| Salary distribution | Feature distributions |
-| --- | --- |
-| ![Salary distribution](data/salary_distribution.png) | ![Feature distributions](data/features_distribution.png) |
+| Salary distribution                                    | Feature distributions                                      |
+|--------------------------------------------------------|------------------------------------------------------------|
+| ![Salary distribution](PHOTOS/salary_distribution.png) | ![Feature distributions](PHOTOS/features_distribution.png) |
 
-| Correlation heatmap | Feature importance |
-| --- | --- |
-| ![Correlation heatmap](data/correlation_heatmap.png) | ![Feature importance](data/feature_importance.png) |
+| Correlation heatmap                                    | Feature importance                                   |
+|--------------------------------------------------------|------------------------------------------------------|
+| ![Correlation heatmap](PHOTOS/correlation_heatmap.png) | ![Feature importance](PHOTOS/feature_importance.png) |
 
 You can open these images directly from the `data/` folder or view them in the notebook outputs.
 
