@@ -55,6 +55,14 @@ The key PNG outputs are shown below for a quick visual overview of the analysis 
 
 You can open these images directly from the `data/` folder or view them in the notebook outputs.
 
+The following are photos of my frontend interface.
+| Frontend interface                                    |
+|--------------------------------------------------------|
+| ![Frontend interface](PHOTOS/dash1.png) |
+|--------------------------------------------------------|
+|Frontend interface|
+| ![Frontend interface](PHOTOS/dash2.png)|
+
 ## Modelling approach
 
 - Target transform: log1p (to reduce skew)
@@ -189,6 +197,6 @@ If you prefer a script-based approach, examine `src/model.py` and `src/preproces
 
 This repository is provided for learning purposes bu Cyrus Ndung'u. If you have questions or want help extending this project, open an issue or contact the author.
 
--- End of README
+
 
 
