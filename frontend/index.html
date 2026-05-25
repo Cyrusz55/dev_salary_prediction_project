@@ -1,469 +1,1380 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Predict developer salary with a refined FastAPI frontend built for clarity, precision, and premium data presentation." />
+  <meta property="og:title" content="Developer Salary Prediction" />
+  <meta property="og:description" content="A premium salary prediction interface for developers and tech professionals." />
+  <meta property="og:image" content="PHOTOS/dash1.png" />
+  <meta name="theme-color" content="#0b0d12" />
   <title>Developer Salary Prediction</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0f172a;
-      --panel: rgba(255, 255, 255, 0.96);
-      --text: #0f172a;
-      --muted: #64748b;
-      --primary: #2563eb;
-      --primary-dark: #1d4ed8;
-      --border: #dbe3ee;
-      --success-bg: #dcfce7;
-      --success-text: #166534;
-      --error-bg: #fee2e2;
-      --error-text: #991b1b;
-      --shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+      color-scheme: dark;
+      --bg: #0b0d12;
+      --bg-elevated: #10141b;
+      --surface: rgba(16, 20, 27, 0.82);
+      --surface-strong: rgba(20, 25, 34, 0.94);
+      --surface-soft: rgba(255, 255, 255, 0.035);
+      --surface-hover: rgba(255, 255, 255, 0.06);
+      --border: rgba(148, 163, 184, 0.16);
+      --border-strong: rgba(148, 163, 184, 0.26);
+      --text: #f4f6fb;
+      --text-muted: rgba(221, 227, 236, 0.72);
+      --text-soft: rgba(221, 227, 236, 0.54);
+      --accent: #8bd3c7;
+      --accent-strong: #b9f0e6;
+      --accent-dim: rgba(139, 211, 199, 0.18);
+      --accent-rgb: 139, 211, 199;
+      --success: #8ed6b3;
+      --success-bg: rgba(31, 80, 63, 0.44);
+      --danger: #f7a7b7;
+      --danger-bg: rgba(95, 39, 53, 0.42);
+      --warning: #f5d69b;
+      --shadow: 0 30px 80px rgba(0, 0, 0, 0.38), 0 6px 20px rgba(7, 10, 17, 0.24);
+      --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.24);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+      --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
     }
-
-    * { box-sizing: border-box; }
-
+    * {
+      box-sizing: border-box;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
     body {
       margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100dvh;
+      font-family: "Outfit", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top left, rgba(37, 99, 235, 0.35), transparent 30%),
-        radial-gradient(circle at top right, rgba(14, 165, 233, 0.25), transparent 25%),
-        linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%);
-      min-height: 100vh;
+        radial-gradient(circle at 14% 12%, rgba(var(--accent-rgb), 0.12), transparent 24%),
+        radial-gradient(circle at 82% 4%, rgba(124, 156, 255, 0.08), transparent 20%),
+        radial-gradient(circle at 90% 85%, rgba(139, 211, 199, 0.08), transparent 24%),
+        linear-gradient(180deg, #0b0d12 0%, #0d1016 54%, #0b0d12 100%);
+      position: relative;
+      overflow-x: hidden;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-
-    .shell {
-      max-width: 1100px;
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before {
+      background:
+        radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.05), transparent 18%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.03), transparent 16%),
+        radial-gradient(circle at 65% 80%, rgba(255, 255, 255, 0.03), transparent 18%);
+      opacity: 0.7;
+    }
+    body::after {
+      opacity: 0.08;
+      background-image: linear-gradient(0deg, rgba(255, 255, 255, 0.22) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.22) 1px, transparent 1px);
+      background-size: 72px 72px;
+      mask-image: radial-gradient(circle at center, black 52%, transparent 100%);
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    img {
+      max-width: 100%;
+      display: block;
+    }
+    .skip-link {
+      position: absolute;
+      left: 1rem;
+      top: 1rem;
+      z-index: 20;
+      padding: 0.75rem 1rem;
+      border-radius: 999px;
+      background: var(--accent-strong);
+      color: #071012;
+      font-weight: 700;
+      transform: translateY(-180%);
+      transition: transform 160ms var(--ease-out);
+    }
+    .skip-link:focus {
+      transform: translateY(0);
+      outline: none;
+    }
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 1320px;
       margin: 0 auto;
-      padding: 40px 20px 56px;
+      padding: 24px 20px 40px;
     }
-
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background:
+        linear-gradient(135deg, rgba(139, 211, 199, 0.95), rgba(139, 211, 199, 0.18)),
+        rgba(255, 255, 255, 0.05);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 16px 32px rgba(17, 35, 32, 0.34);
+      display: grid;
+      place-items: center;
+      color: #071012;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      flex: none;
+    }
+    .brand-copy {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+    .brand-copy strong {
+      font-size: 0.98rem;
+      letter-spacing: -0.02em;
+    }
+    .brand-copy span {
+      color: var(--text-soft);
+      font-size: 0.9rem;
+    }
+    .topbar-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.62rem 0.92rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      line-height: 1;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+    .chip strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .chip .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0.14);
+      flex: none;
+    }
     .hero {
       display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
+      grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.82fr);
       gap: 24px;
       align-items: stretch;
       margin-bottom: 24px;
     }
-
-    .hero-card,
-    .form-card,
-    .info-card {
-      background: var(--panel);
-      border: 1px solid rgba(219, 227, 238, 0.9);
-      border-radius: 20px;
+    .hero-copy,
+    .hero-signal,
+    .panel,
+    .results-panel {
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.025)), var(--surface);
+      backdrop-filter: blur(20px) saturate(120%);
       box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
+      border-radius: var(--radius-xl);
     }
-
-    .hero-card {
+    .hero-copy {
       padding: 28px;
+      display: grid;
+      gap: 18px;
+      align-content: start;
     }
-
-    .badge {
+    .eyebrow {
+      margin: 0;
+      color: var(--accent);
+      font-size: 0.86rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      text-wrap: balance;
+      letter-spacing: -0.04em;
+    }
+    h1 {
+      font-size: clamp(2.5rem, 5vw, 4.9rem);
+      line-height: 0.96;
+      max-width: 12ch;
+    }
+    .hero-copy p,
+    .panel-copy,
+    .results-note,
+    .field-message,
+    .form-status,
+    .list-note {
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+    .hero-copy > p {
+      margin: 0;
+      max-width: 62ch;
+      font-size: 1.03rem;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 2px;
+    }
+    .button,
+    .button-secondary,
+    .button-link {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      min-height: 48px;
+      padding: 0.86rem 1.15rem;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      background: rgba(37, 99, 235, 0.1);
-      color: var(--primary-dark);
+      justify-content: center;
+      gap: 10px;
+      font: inherit;
       font-weight: 700;
-      font-size: 0.9rem;
-      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      transition:
+        transform 160ms var(--ease-out),
+        background-color 160ms var(--ease-out),
+        border-color 160ms var(--ease-out),
+        box-shadow 160ms var(--ease-out),
+        color 160ms var(--ease-out);
+      will-change: transform;
     }
-
-    h1 {
-      margin: 0 0 12px;
-      font-size: clamp(2rem, 3vw, 3rem);
-      line-height: 1.05;
-      letter-spacing: -0.03em;
+    .button {
+      background: linear-gradient(135deg, rgba(139, 211, 199, 1), rgba(172, 235, 223, 0.95));
+      color: #071012;
+      box-shadow: 0 16px 34px rgba(16, 81, 73, 0.28);
     }
-
-    .lead {
-      margin: 0;
-      color: var(--muted);
-      font-size: 1.02rem;
-      line-height: 1.6;
-      max-width: 62ch;
+    .button-secondary,
+    .button-link {
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
     }
-
-    .stats {
+    .button-link {
+      min-height: auto;
+      padding: 0.28rem 0.1rem;
+      border: 0;
+      border-radius: 0;
+      color: var(--text-muted);
+      box-shadow: none;
+    }
+    .button .icon,
+    .button-secondary .icon,
+    .button-link .icon {
+      width: 18px;
+      height: 18px;
+      flex: none;
+    }
+    .hero-signal {
+      padding: 26px;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-top: 22px;
+      gap: 20px;
+      align-content: start;
     }
-
-    .stat {
-      padding: 16px;
-      border-radius: 16px;
-      background: #f8fbff;
-      border: 1px solid var(--border);
-    }
-
-    .stat strong {
-      display: block;
-      font-size: 1.15rem;
-      margin-bottom: 4px;
-    }
-
-    .stat span {
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-
-    .info-card {
-      padding: 22px;
-    }
-
-    .info-card h2 {
-      margin: 0 0 10px;
-      font-size: 1.1rem;
-    }
-
-    .info-card ul {
-      margin: 0;
-      padding-left: 18px;
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    .form-card {
-      padding: 28px;
-    }
-
-    form {
+    .signal-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
+      gap: 12px;
     }
-
-    .field {
+    .signal-card {
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 14px;
+      min-height: 104px;
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+    .signal-card span {
+      color: var(--text-soft);
+      font-size: 0.88rem;
+      line-height: 1.35;
+    }
+    .signal-card strong {
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+    }
+    .signal-card code {
+      font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+      font-size: 0.83rem;
+      color: var(--accent-strong);
+      background: rgba(139, 211, 199, 0.08);
+      padding: 0.24rem 0.42rem;
+      border-radius: 999px;
+      width: fit-content;
+    }
+    .signal-board {
+      padding: 16px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(139, 211, 199, 0.08), rgba(255, 255, 255, 0.02));
+      border: 1px solid rgba(139, 211, 199, 0.18);
+      display: grid;
+      gap: 10px;
+    }
+    .signal-board h2 {
+      font-size: 1.08rem;
+      line-height: 1.15;
+    }
+    .signal-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+    }
+    .signal-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+    .signal-list svg {
+      width: 16px;
+      height: 16px;
+      margin-top: 2px;
+      color: var(--accent);
+      flex: none;
+    }
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.06fr) minmax(320px, 0.94fr);
+      gap: 24px;
+      align-items: start;
+    }
+    .panel {
+      padding: 24px;
+    }
+    .panel-header {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .panel-header h2 {
+      font-size: clamp(1.4rem, 2.1vw, 2rem);
+      line-height: 1.1;
+    }
+    .form-status {
+      margin: 0;
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.025);
+      font-size: 0.94rem;
+    }
+    .form-status.is-error {
+      border-color: rgba(247, 167, 183, 0.2);
+      background: var(--danger-bg);
+      color: #ffd8e1;
+    }
+    .form-status.is-success {
+      border-color: rgba(142, 214, 179, 0.18);
+      background: var(--success-bg);
+      color: #d8f5e6;
+    }
+    form {
+      display: grid;
+      gap: 18px;
+    }
+    fieldset {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      display: grid;
+      gap: 14px;
+    }
+    legend {
+      margin-bottom: 2px;
+      padding: 0;
+      font-size: 0.86rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+    }
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .field-grid.single {
+      grid-template-columns: 1fr;
+    }
+    .field {
+      display: grid;
       gap: 8px;
     }
-
     .field.full {
       grid-column: 1 / -1;
     }
-
     label {
-      font-weight: 700;
-      font-size: 0.95rem;
-      color: #1f2937;
+      font-size: 0.97rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text);
     }
-
-    .hint {
-      margin: 0;
-      font-size: 0.84rem;
-      color: var(--muted);
-    }
-
     input,
     select {
       width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 14px;
-      font: inherit;
-      background: white;
+      min-height: 48px;
+      padding: 0.86rem 0.95rem;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.03);
       color: var(--text);
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    input:focus,
-    select:focus {
+      font: inherit;
+      transition:
+        transform 160ms var(--ease-out),
+        border-color 160ms var(--ease-out),
+        box-shadow 160ms var(--ease-out),
+        background-color 160ms var(--ease-out);
       outline: none;
-      border-color: #93c5fd;
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
     }
-
+     select {
+       appearance: none;
+       background-image: linear-gradient(45deg, transparent 50%, var(--accent-strong) 50%), linear-gradient(135deg, var(--accent-strong) 50%, transparent 50%);
+       background-position: calc(100% - 18px) calc(50% - 3px), calc(100% - 12px) calc(50% - 3px);
+       background-size: 6px 6px, 6px 6px;
+       background-repeat: no-repeat;
+       padding-right: 2.25rem;
+       background-color: rgba(20, 25, 34, 0.6);
+       color: var(--text);
+       font-weight: 500;
+     }
+     select option {
+       background-color: rgba(16, 20, 27, 0.95);
+       color: var(--text);
+       padding: 8px 12px;
+       font-weight: 500;
+     }
+     select option:checked {
+       background: linear-gradient(rgba(139, 211, 199, 0.3), rgba(139, 211, 199, 0.3)), rgba(16, 20, 27, 0.95);
+       background-color: rgba(139, 211, 199, 0.2);
+       color: var(--accent-strong);
+       font-weight: 600;
+     }
+     input::placeholder {
+      color: rgba(221, 227, 236, 0.42);
+    }
+     input:hover,
+     select:hover {
+       border-color: rgba(255, 255, 255, 0.24);
+       background-color: rgba(20, 25, 34, 0.75);
+     }
+     input:hover {
+       background: rgba(255, 255, 255, 0.05);
+     }
+    input:focus-visible,
+    select:focus-visible,
+    .button:focus-visible,
+    .button-secondary:focus-visible,
+    .button-link:focus-visible {
+      border-color: rgba(var(--accent-rgb), 0.86);
+      box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0.16);
+    }
+    input[aria-invalid="true"],
+    select[aria-invalid="true"] {
+      border-color: rgba(247, 167, 183, 0.55);
+      box-shadow: 0 0 0 4px rgba(247, 167, 183, 0.08);
+    }
+    .field-message {
+      margin: 0;
+      font-size: 0.84rem;
+      min-height: 1.2em;
+    }
+    .field-message.is-error {
+      color: #fbc4d0;
+    }
+    .field-message.is-muted {
+      color: var(--text-soft);
+    }
     .actions {
-      grid-column: 1 / -1;
       display: flex;
       gap: 12px;
       align-items: center;
       flex-wrap: wrap;
-      margin-top: 4px;
+      padding-top: 4px;
     }
-
-    button {
-      appearance: none;
-      border: none;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--primary), #1d4ed8);
-      color: white;
-      font: inherit;
-      font-weight: 700;
-      padding: 13px 18px;
-      cursor: pointer;
-      box-shadow: 0 14px 30px rgba(37, 99, 235, 0.22);
-      transition: transform 0.12s ease, filter 0.12s ease;
+    .button:active,
+    .button-secondary:active,
+    .button-link:active {
+      transform: scale(0.98);
     }
-
-    button:hover {
-      filter: brightness(1.04);
-      transform: translateY(-1px);
-    }
-
-    button:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
+    .button:disabled {
+      opacity: 0.72;
+      cursor: progress;
       transform: none;
-    }
-
-    .secondary {
-      background: #e2e8f0;
-      color: #0f172a;
       box-shadow: none;
     }
-
-    .result {
-      grid-column: 1 / -1;
-      display: none;
-      padding: 18px;
-      border-radius: 14px;
-      font-weight: 700;
-      line-height: 1.5;
+    .results-panel {
+      position: sticky;
+      top: 20px;
+      padding: 24px;
+      display: grid;
+      gap: 18px;
+      overflow: hidden;
     }
-
-    .result.success {
-      display: block;
-      background: var(--success-bg);
-      color: var(--success-text);
-      border: 1px solid rgba(22, 101, 52, 0.12);
+    .results-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 15% 0%, rgba(var(--accent-rgb), 0.14), transparent 26%),
+        radial-gradient(circle at 92% 12%, rgba(124, 156, 255, 0.08), transparent 22%);
+      opacity: 0.88;
     }
-
-    .result.error {
-      display: block;
-      background: var(--error-bg);
-      color: var(--error-text);
-      border: 1px solid rgba(153, 27, 27, 0.12);
+    .results-shell,
+    .results-skeleton {
+      position: relative;
+      z-index: 1;
     }
-
-    .result small {
-      display: block;
-      font-weight: 500;
-      margin-top: 6px;
+    .results-shell {
+      display: grid;
+      gap: 16px;
+      transition:
+        opacity 180ms var(--ease-out),
+        transform 180ms var(--ease-out),
+        filter 180ms var(--ease-out);
+    }
+    .results-panel[data-state="loading"] .results-shell,
+    .results-panel[data-state="error"] .results-shell {
+      transform: translateY(2px);
+    }
+    .results-panel[data-state="loading"] .results-shell {
+      opacity: 0.35;
+      filter: blur(1px);
+      pointer-events: none;
+    }
+    .results-panel[data-state="idle"] .results-shell {
       opacity: 0.9;
     }
-
-    .footer-note {
-      margin-top: 14px;
-      color: var(--muted);
-      font-size: 0.9rem;
+    .results-panel[data-state="success"] .results-shell {
+      opacity: 1;
+    }
+    .results-kicker {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .results-kicker h2 {
+      font-size: clamp(1.45rem, 2vw, 2rem);
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.55rem 0.82rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      white-space: nowrap;
+    }
+    .status-pill .pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0.12);
+    }
+    .salary-display {
+      border-radius: 22px;
+      padding: 20px;
+      background: linear-gradient(180deg, rgba(var(--accent-rgb), 0.16), rgba(255, 255, 255, 0.03));
+      border: 1px solid rgba(var(--accent-rgb), 0.16);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      display: grid;
+      gap: 10px;
+    }
+    .salary-label {
+      color: var(--text-soft);
+      font-size: 0.88rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .salary-value {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-variant-numeric: tabular-nums;
+    }
+    .salary-value .currency {
+      color: var(--text-soft);
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .salary-value strong {
+      font-size: clamp(2.5rem, 6vw, 4.8rem);
+      line-height: 0.92;
+      letter-spacing: -0.06em;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .salary-value span {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .metric {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: grid;
+      gap: 10px;
+      min-height: 156px;
+    }
+    .metric span {
+      color: var(--text-soft);
+      font-size: 0.86rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .metric strong {
+      font-size: 1.45rem;
+      letter-spacing: -0.03em;
+      font-variant-numeric: tabular-nums;
+    }
+    .meter {
+      position: relative;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+    }
+    .meter > i {
+      display: block;
+      height: 100%;
+      width: 42%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, rgba(var(--accent-rgb), 0.55), rgba(var(--accent-rgb), 1));
+      box-shadow: 0 0 18px rgba(var(--accent-rgb), 0.28);
+      transition: width 220ms var(--ease-out);
+    }
+    .metric p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+    .results-note {
+      margin: 0;
+      padding-top: 4px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.93rem;
+    }
+    .results-panel[data-state="error"] {
+      border-color: rgba(247, 167, 183, 0.24);
+      box-shadow: 0 30px 80px rgba(50, 17, 25, 0.34), 0 6px 20px rgba(7, 10, 17, 0.24);
+    }
+    .results-panel[data-state="success"] {
+      border-color: rgba(var(--accent-rgb), 0.24);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(var(--accent-rgb), 0.06);
+    }
+    .results-panel[data-state="success"] .salary-display {
+      background: linear-gradient(180deg, rgba(var(--accent-rgb), 0.22), rgba(255, 255, 255, 0.04));
+    }
+    .results-panel[data-state="error"] .salary-display {
+      background: linear-gradient(180deg, rgba(247, 167, 183, 0.14), rgba(255, 255, 255, 0.03));
+      border-color: rgba(247, 167, 183, 0.16);
+    }
+    .results-panel[data-state="error"] .status-pill {
+      color: #ffd8e1;
+      background: rgba(247, 167, 183, 0.08);
+      border-color: rgba(247, 167, 183, 0.16);
+    }
+    .results-skeleton {
+      display: none;
+      gap: 14px;
+    }
+    .skeleton-line,
+    .skeleton-block,
+    .skeleton-pill {
+      position: relative;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .skeleton-line::after,
+    .skeleton-block::after,
+    .skeleton-pill::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transform: translateX(-100%);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+      animation: shimmer 1.4s linear infinite;
+    }
+    .skeleton-pill {
+      width: 112px;
+      height: 32px;
+      border-radius: 999px;
+    }
+    .skeleton-line {
+      height: 16px;
+      border-radius: 999px;
+    }
+    .skeleton-block {
+      height: 118px;
+      border-radius: 20px;
+    }
+    .results-panel[data-state="loading"] .results-skeleton {
+      display: grid;
+    }
+    .results-panel[data-state="loading"] .results-shell,
+    .results-panel[data-state="idle"] .results-skeleton {
+      display: none;
+    }
+    .results-panel[data-state="idle"] .empty-state {
+      display: grid;
+    }
+    .results-panel[data-state="success"] .empty-state,
+    .results-panel[data-state="error"] .empty-state,
+    .results-panel[data-state="loading"] .empty-state {
+      display: none;
+    }
+    .empty-state {
+      display: grid;
+      gap: 12px;
+      padding-top: 2px;
+    }
+    .empty-state h3 {
+      font-size: 1.1rem;
+    }
+    .empty-state p {
+      margin: 0;
+      color: var(--text-muted);
       line-height: 1.6;
     }
-
-    @media (max-width: 900px) {
-      .hero {
+    .empty-state ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .footer {
+      margin-top: 24px;
+      padding: 16px 4px 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      color: var(--text-soft);
+      font-size: 0.9rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .footer nav {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .footer a {
+      color: var(--text-muted);
+    }
+    .footer a:hover {
+      color: var(--text);
+    }
+    .helper-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .helper-row .list-note {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .button:hover,
+      .button-secondary:hover,
+      .button-link:hover {
+        transform: translateY(-1px);
+      }
+      .button:hover {
+        box-shadow: 0 18px 38px rgba(16, 81, 73, 0.34);
+      }
+      .button-secondary:hover,
+      .button-link:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .hero-copy:hover,
+      .hero-signal:hover,
+      .panel:hover,
+      .results-panel:hover {
+        border-color: rgba(255, 255, 255, 0.24);
+      }
+      .signal-card:hover {
+        background: rgba(255, 255, 255, 0.05);
+        transform: translateY(-1px);
+        transition: transform 180ms var(--ease-out), background-color 180ms var(--ease-out), border-color 180ms var(--ease-out);
+      }
+    }
+    @keyframes shimmer {
+      100% {
+        transform: translateX(100%);
+      }
+    }
+    @media (max-width: 1100px) {
+      .hero,
+      .workspace {
         grid-template-columns: 1fr;
       }
-
-      form {
+      .results-panel {
+        position: relative;
+        top: 0;
+      }
+      h1 {
+        max-width: 14ch;
+      }
+    }
+    @media (max-width: 760px) {
+      .page {
+        padding: 18px 14px 28px;
+      }
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .topbar-meta {
+        justify-content: flex-start;
+      }
+      .hero-copy,
+      .hero-signal,
+      .panel,
+      .results-panel {
+        border-radius: 22px;
+        padding: 20px;
+      }
+      .field-grid,
+      .results-grid,
+      .signal-grid {
         grid-template-columns: 1fr;
       }
-
-      .stats {
-        grid-template-columns: 1fr;
+      .salary-value strong {
+        font-size: clamp(2.2rem, 14vw, 3.5rem);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .skeleton-line::after,
+      .skeleton-block::after,
+      .skeleton-pill::after {
+        animation: none;
       }
     }
   </style>
 </head>
 <body>
-  <div class="shell">
-    <section class="hero">
-      <div class="hero-card">
-        <div class="badge">Salary Intelligence • FastAPI + XGBoost</div>
-        <h1>Developer Salary Prediction</h1>
-        <p class="lead">
-          Estimate an annual developer salary using your profile details, work experience, organization size,
-          location, and technical background. This interface is designed for the current salary prediction project.
-        </p>
-
-        <div class="stats">
-          <div class="stat">
-            <strong>10 inputs</strong>
-            <span>Aligned with the backend request model</span>
-          </div>
-          <div class="stat">
-            <strong>USD output</strong>
-            <span>Predicted annual compensation</span>
-          </div>
-          <div class="stat">
-            <strong>FastAPI ready</strong>
-            <span>Submits to <code>/api/v1/predict</code></span>
-          </div>
-        </div>
+  <a class="skip-link" href="#predictor">Skip to predictor</a>
+  <div class="page">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="Developer salary prediction home">
+        <span class="brand-mark">DS</span>
+        <span class="brand-copy">
+          <strong>Developer salary prediction</strong>
+          <span>FastAPI frontend with a refined data-entry flow</span>
+        </span>
+      </a>
+      <div class="topbar-meta" aria-label="Project metadata">
+        <span class="chip"><span class="dot" aria-hidden="true"></span><strong>Single-page</strong> vanilla HTML + CSS + JS</span>
+        <span class="chip">Model route <strong>/api/v1/predict</strong></span>
+        <a class="chip" href="/docs">Swagger docs</a>
       </div>
-
-      <aside class="info-card">
-        <h2>How it works</h2>
-        <ul>
-          <li>Fill in your profile details below.</li>
-          <li>The form sends JSON to the prediction API.</li>
-          <li>The model returns a salary estimate in USD.</li>
-          <li>Use the result as a rough benchmark, not a guarantee.</li>
-        </ul>
-      </aside>
-    </section>
-
-    <section class="form-card">
-      <form id="salaryForm">
-        <div class="field">
-          <label for="Age">Age Range</label>
-          <select id="Age" name="Age" required>
-            <option value="18-24 years old">18-24 years old</option>
-            <option value="25-34 years old" selected>25-34 years old</option>
-            <option value="35-44 years old">35-44 years old</option>
-            <option value="45-54 years old">45-54 years old</option>
-            <option value="55-64 years old">55-64 years old</option>
-            <option value="65 years or older">65 years or older</option>
-            <option value="Prefer not to say">Prefer not to say</option>
-          </select>
+    </header>
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Salary intelligence for technical teams</p>
+          <h1 id="hero-title">Predict annual compensation with clarity and restraint.</h1>
+          <p>
+            Enter the same survey-style fields your model was trained on, then get a clear salary estimate with
+            validation, an input-confidence signal, and a results layout that keeps the data readable instead of noisy.
+          </p>
+          <div class="hero-actions">
+            <a class="button" href="#predictor">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" />
+              </svg>
+              Start prediction
+            </a>
+            <a class="button-secondary" href="/api/v1/health">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 21s7-4.4 7-11V6l-7-3-7 3v4c0 6.6 7 11 7 11Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                <path d="M9.5 12.2 11.5 14l3.2-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              Check API health
+            </a>
+          </div>
         </div>
-
-        <div class="field">
-          <label for="WorkExp">Work experience (years)</label>
-          <input id="WorkExp" name="WorkExp" type="number" min="0" max="60" value="5" required />
-          <p class="hint">Years of professional work experience.</p>
-        </div>
-
-        <div class="field">
-          <label for="YearsCode">Years coding</label>
-          <input id="YearsCode" name="YearsCode" type="number" min="0" max="60" value="8" required />
-          <p class="hint">How long you have been coding.</p>
-        </div>
-
-        <div class="field">
-          <label for="EdLevel">Education level</label>
-          <select id="EdLevel" name="EdLevel" required>
-            <option value="Primary/elementary school">Primary/elementary school</option>
-            <option value="Secondary school (e.g. American high school, German Realschule or Gymnasium, etc.)">Secondary school</option>
-            <option value="Some college/university study without earning a degree">Some college/university (no degree)</option>
-            <option value="Associate degree (A.A., A.S., etc.)">Associate degree</option>
-            <option value="Bachelor's degree (B.A., B.S., B.Eng., etc.)" selected>Bachelor's degree</option>
-            <option value="Master's degree (M.A., M.S., M.Eng., MBA, etc.)">Master's degree</option>
-            <option value="Professional degree (JD, MD, Ph.D, Ed.D, etc.)">Professional degree</option>
-            <option value="Other (please specify):">Other</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="Employment">Employment</label>
-          <select id="Employment" name="Employment" required>
-            <option value="Employed" selected>Employed</option>
-            <option value="Independent contractor, freelancer, or self-employed">Independent contractor / Freelancer</option>
-            <option value="Student">Student</option>
-            <option value="Retired">Retired</option>
-            <option value="Not employed">Not employed</option>
-            <option value="I prefer not to say">Prefer not to say</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="DevType">Developer type</label>
-          <select id="DevType" name="DevType" required>
-            <option value="Developer, back-end">Back-end developer</option>
-            <option value="Developer, front-end">Front-end developer</option>
-            <option value="Developer, full-stack" selected>Full-stack developer</option>
-            <option value="Developer, mobile">Mobile developer</option>
-            <option value="Data scientist or machine learning specialist">Data scientist / ML specialist</option>
-            <option value="DevOps specialist">DevOps specialist</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="OrgSize">Organization size</label>
-          <select id="OrgSize" name="OrgSize" required>
-            <option value="Less than 20 employees">Less than 20 employees</option>
-            <option value="20 to 99 employees">20 to 99 employees</option>
-            <option value="100 to 499 employees" selected>100 to 499 employees</option>
-            <option value="500 to 999 employees">500 to 999 employees</option>
-            <option value="1,000 to 4,999 employees">1,000 to 4,999 employees</option>
-            <option value="5,000 to 9,999 employees">5,000 to 9,999 employees</option>
-            <option value="10,000 or more employees">10,000 or more employees</option>
-            <option value="Just me - I am a freelancer, sole proprietor, etc.">Just me - Freelancer</option>
-            <option value="I don't know">I don't know</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="RemoteWork">Remote work</label>
-          <select id="RemoteWork" name="RemoteWork" required>
-            <option value="In-person">In-person</option>
-            <option value="Remote" selected>Remote</option>
-            <option value="Hybrid (some remote, leans heavy to in-person)">Hybrid (leans in-person)</option>
-            <option value="Hybrid (some in-person, leans heavy to flexibility)">Hybrid (leans flexibility)</option>
-            <option value="Your choice (very flexible, you can come in when you want or just as needed)">Your choice (very flexible)</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="Industry">Industry</label>
-          <input id="Industry" name="Industry" type="text" value="Software Development" placeholder="e.g. Software Development, Fintech, Retail" required />
-          <p class="hint">Free-text input for the industry sector.</p>
-        </div>
-
-        <div class="field">
-          <label for="Country">Country</label>
-          <input id="Country" name="Country" type="text" value="United States" placeholder="e.g. United States" required />
-          <p class="hint">Free-text input; use your current country of residence.</p>
-        </div>
-
-        <div class="field full">
-          <label for="LanguageHaveWorkedWith">Languages worked with</label>
-          <input
-            id="LanguageHaveWorkedWith"
-            name="LanguageHaveWorkedWith"
-            type="text"
-            value="Python;SQL;JavaScript"
-            placeholder="Python;SQL;JavaScript"
-            required
-          />
-          <p class="hint">Enter a semicolon-separated list of languages, matching the project data style.</p>
-        </div>
-
-        <div class="actions">
-          <button id="predictBtn" type="submit">Predict Salary</button>
-          <button class="secondary" type="button" onclick="resetForm()">Reset</button>
-        </div>
-
-        <div id="result" class="result"></div>
-      </form>
-
-      <p class="footer-note">
-        The model is trained on cleaned developer survey data and returns a salary estimate in USD.
-        If the API is not ready, make sure the model file has been created by the training pipeline.
-      </p>
-    </section>
+        <aside class="hero-signal" aria-label="Project summary">
+          <div class="signal-grid">
+            <article class="signal-card">
+              <span>Inputs</span>
+              <strong>10 fields</strong>
+              <code>schema matched</code>
+            </article>
+            <article class="signal-card">
+              <span>Output</span>
+              <strong>USD estimate</strong>
+              <code>point estimate</code>
+            </article>
+            <article class="signal-card">
+              <span>Model family</span>
+              <strong>XGBoost regressor</strong>
+              <code>log target</code>
+            </article>
+            <article class="signal-card">
+              <span>Response</span>
+              <strong>FastAPI JSON</strong>
+              <code>/api/v1/predict</code>
+            </article>
+          </div>
+          <div class="signal-board">
+            <h2>What this interface does well</h2>
+            <ul class="signal-list">
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M5 12.5 9 16l10-10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                Shows the estimate in a dedicated results panel so the number has room to breathe.
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M5 12.5 9 16l10-10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                Surfaces inline validation before the request leaves the page.
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M5 12.5 9 16l10-10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                Uses a heuristic input-confidence meter so uncertainty is visible without pretending the backend returns intervals.
+              </li>
+            </ul>
+          </div>
+        </aside>
+      </section>
+      <section class="workspace" id="predictor" aria-labelledby="predictor-title">
+        <section class="panel">
+          <div class="panel-header">
+            <p class="eyebrow">Prediction form</p>
+            <h2 id="predictor-title">Enter a developer profile</h2>
+            <p class="panel-copy">
+              The field values below align with the model schema. Free-text fields include suggestions to keep the inputs
+              precise and consistent.
+            </p>
+            <p class="form-status" id="formStatus" role="status" aria-live="polite">
+              Ready. Complete the fields and submit to generate a salary estimate.
+            </p>
+          </div>
+          <form id="salaryForm" novalidate>
+            <fieldset>
+              <legend>Profile</legend>
+              <div class="field-grid">
+                <div class="field">
+                  <label for="Age">Age range</label>
+                  <select id="Age" name="Age" required>
+                    <option value="18-24 years old">18-24 years old</option>
+                    <option value="25-34 years old" selected>25-34 years old</option>
+                    <option value="35-44 years old">35-44 years old</option>
+                    <option value="45-54 years old">45-54 years old</option>
+                    <option value="55-64 years old">55-64 years old</option>
+                    <option value="65 years or older">65 years or older</option>
+                    <option value="Prefer not to say">Prefer not to say</option>
+                  </select>
+                  <p class="field-message is-muted" data-error-for="Age" data-default="Use the same age band format as the survey dataset.">Use the same age band format as the survey dataset.</p>
+                </div>
+                <div class="field">
+                  <label for="EdLevel">Education level</label>
+                  <select id="EdLevel" name="EdLevel" required>
+                    <option value="Primary/elementary school">Primary/elementary school</option>
+                    <option value="Secondary school (e.g. American high school, German Realschule or Gymnasium, etc.)">Secondary school</option>
+                    <option value="Some college/university study without earning a degree">Some college/university study without earning a degree</option>
+                    <option value="Associate degree (A.A., A.S., etc.)">Associate degree</option>
+                    <option value="Bachelor's degree (B.A., B.S., B.Eng., etc.)" selected>Bachelor's degree</option>
+                    <option value="Master's degree (M.A., M.S., M.Eng., MBA, etc.)">Master's degree</option>
+                    <option value="Professional degree (JD, MD, Ph.D, Ed.D, etc.)">Professional degree</option>
+                    <option value="Other (please specify):">Other</option>
+                  </select>
+                  <p class="field-message is-muted" data-error-for="EdLevel" data-default="Choose the exact education label used by the model.">Choose the exact education label used by the model.</p>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Experience</legend>
+              <div class="field-grid">
+                <div class="field">
+                  <label for="WorkExp">Work experience, years</label>
+                  <input id="WorkExp" name="WorkExp" type="number" min="0" max="60" step="1" inputmode="numeric" value="5" required />
+                  <p class="field-message is-muted" data-error-for="WorkExp" data-default="Enter a whole number between 0 and 60.">Enter a whole number between 0 and 60.</p>
+                </div>
+                <div class="field">
+                  <label for="YearsCode">Years coding</label>
+                  <input id="YearsCode" name="YearsCode" type="number" min="0" max="60" step="1" inputmode="numeric" value="8" required />
+                  <p class="field-message is-muted" data-error-for="YearsCode" data-default="Enter a whole number between 0 and 60.">Enter a whole number between 0 and 60.</p>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Work context</legend>
+              <div class="field-grid">
+                <div class="field">
+                  <label for="Employment">Employment status</label>
+                  <select id="Employment" name="Employment" required>
+                    <option value="Employed" selected>Employed</option>
+                    <option value="Independent contractor, freelancer, or self-employed">Independent contractor, freelancer, or self-employed</option>
+                    <option value="Student">Student</option>
+                    <option value="Retired">Retired</option>
+                    <option value="Not employed">Not employed</option>
+                    <option value="I prefer not to say">I prefer not to say</option>
+                  </select>
+                  <p class="field-message is-muted" data-error-for="Employment" data-default="Choose the employment category used by the model.">Choose the employment category used by the model.</p>
+                </div>
+                <div class="field">
+                  <label for="DevType">Developer type</label>
+                  <select id="DevType" name="DevType" required>
+                    <option value="Developer, back-end">Developer, back-end</option>
+                    <option value="Developer, front-end">Developer, front-end</option>
+                    <option value="Developer, full-stack" selected>Developer, full-stack</option>
+                    <option value="Developer, mobile">Developer, mobile</option>
+                    <option value="Data scientist or machine learning specialist">Data scientist or machine learning specialist</option>
+                    <option value="DevOps specialist">DevOps specialist</option>
+                  </select>
+                  <p class="field-message is-muted" data-error-for="DevType" data-default="Match the survey role label as closely as possible.">Match the survey role label as closely as possible.</p>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Company and location</legend>
+              <div class="field-grid">
+                <div class="field">
+                  <label for="OrgSize">Organization size</label>
+                  <select id="OrgSize" name="OrgSize" required>
+                    <option value="Less than 20 employees">Less than 20 employees</option>
+                    <option value="20 to 99 employees">20 to 99 employees</option>
+                    <option value="100 to 499 employees" selected>100 to 499 employees</option>
+                    <option value="500 to 999 employees">500 to 999 employees</option>
+                    <option value="1,000 to 4,999 employees">1,000 to 4,999 employees</option>
+                    <option value="5,000 to 9,999 employees">5,000 to 9,999 employees</option>
+                    <option value="10,000 or more employees">10,000 or more employees</option>
+                    <option value="Just me - I am a freelancer, sole proprietor, etc.">Just me - I am a freelancer, sole proprietor, etc.</option>
+                    <option value="I don't know">I don't know</option>
+                  </select>
+                  <p class="field-message is-muted" data-error-for="OrgSize" data-default="Choose the size bucket used in the dataset.">Choose the size bucket used in the dataset.</p>
+                </div>
+                <div class="field">
+                  <label for="RemoteWork">Remote work</label>
+                  <select id="RemoteWork" name="RemoteWork" required>
+                    <option value="Remote" selected>Remote</option>
+                    <option value="In-person">In-person</option>
+                    <option value="Hybrid (some remote, leans heavy to in-person)">Hybrid (leans in-person)</option>
+                    <option value="Hybrid (some in-person, leans heavy to flexibility)">Hybrid (leans flexibility)</option>
+                    <option value="Your choice (very flexible, you can come in when you want or just as needed)">Your choice (very flexible)</option>
+                  </select>
+                  <p class="field-message is-muted" data-error-for="RemoteWork" data-default="Pick the remote-work label that matches the training schema.">Pick the remote-work label that matches the training schema.</p>
+                </div>
+                <div class="field">
+                  <label for="Country">Country</label>
+                  <input id="Country" name="Country" list="countryList" type="text" value="United States" placeholder="United States" autocomplete="country-name" required />
+                  <datalist id="countryList">
+                    <option value="United States"></option>
+                    <option value="Canada"></option>
+                    <option value="United Kingdom"></option>
+                    <option value="Germany"></option>
+                    <option value="India"></option>
+                    <option value="Kenya"></option>
+                    <option value="Brazil"></option>
+                    <option value="Australia"></option>
+                  </datalist>
+                  <p class="field-message is-muted" data-error-for="Country" data-default="Use a specific country name, like United States or Germany.">Use a specific country name, like United States or Germany.</p>
+                </div>
+                <div class="field">
+                  <label for="Industry">Industry</label>
+                  <input id="Industry" name="Industry" list="industryList" type="text" value="Software Development" placeholder="Software Development" autocomplete="organization-title" required />
+                  <datalist id="industryList">
+                    <option value="Software Development"></option>
+                    <option value="Fintech"></option>
+                    <option value="Healthcare"></option>
+                    <option value="Education"></option>
+                    <option value="Retail"></option>
+                    <option value="Cybersecurity"></option>
+                    <option value="Public Sector"></option>
+                    <option value="E-commerce"></option>
+                  </datalist>
+                  <p class="field-message is-muted" data-error-for="Industry" data-default="Use a specific sector name rather than a vague phrase.">Use a specific sector name rather than a vague phrase.</p>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Technical stack</legend>
+              <div class="field-grid single">
+                <div class="field full">
+                  <label for="LanguageHaveWorkedWith">Languages worked with</label>
+                  <input
+                    id="LanguageHaveWorkedWith"
+                    name="LanguageHaveWorkedWith"
+                    type="text"
+                    value="Python;SQL;JavaScript"
+                    placeholder="Python;SQL;JavaScript"
+                    autocomplete="off"
+                    required
+                  />
+                  <p class="field-message is-muted" data-error-for="LanguageHaveWorkedWith" data-default="Separate languages with semicolons, like Python;SQL;JavaScript.">Separate languages with semicolons, like Python;SQL;JavaScript.</p>
+                </div>
+              </div>
+            </fieldset>
+            <div class="actions">
+              <button class="button" id="predictBtn" type="submit">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" />
+                </svg>
+                Calculate estimate
+              </button>
+              <button class="button-secondary" type="button" id="resetBtn">
+                Reset form
+              </button>
+            </div>
+          </form>
+        </section>
+        <aside class="results-panel" id="resultPanel" data-state="idle" aria-live="polite" aria-atomic="true" aria-labelledby="results-title">
+          <div class="results-skeleton" aria-hidden="true">
+            <div class="skeleton-pill"></div>
+            <div class="skeleton-line" style="width: 68%"></div>
+            <div class="skeleton-block"></div>
+            <div class="skeleton-block"></div>
+            <div class="skeleton-line" style="width: 84%"></div>
+          </div>
+          <div class="results-shell">
+            <div class="results-kicker">
+              <div>
+                <p class="eyebrow">Prediction result</p>
+                <h2 id="results-title">Ready for an estimate</h2>
+              </div>
+              <span class="status-pill" id="resultState"><span class="pulse" aria-hidden="true"></span>Idle</span>
+            </div>
+            <section class="salary-display" aria-labelledby="salary-label">
+              <div class="salary-label" id="salary-label">Annual salary estimate</div>
+              <div class="salary-value">
+                <span class="currency">US$</span>
+                <strong id="salaryValue">—</strong>
+                <span id="salaryMeta">Submit the form to calculate a point estimate.</span>
+              </div>
+            </section>
+            <div class="results-grid">
+              <article class="metric">
+                <span>Input confidence</span>
+                <strong id="confidenceValue">—</strong>
+                <div class="meter" aria-hidden="true"><i id="confidenceBar"></i></div>
+                <p id="confidenceNote">Heuristic based on schema fit and field completeness.</p>
+              </article>
+              <article class="metric">
+                <span>Request latency</span>
+                <strong id="latencyValue">—</strong>
+                <p id="latencyNote">Measured from submit to response.</p>
+              </article>
+            </div>
+            <p class="results-note" id="resultsNote">
+              The backend returns a single point estimate. This interface surfaces that estimate clearly and labels the
+              lack of a statistical interval so uncertainty stays visible.
+            </p>
+            <div class="empty-state" id="emptyState">
+              <h3>Nothing has been calculated yet.</h3>
+              <p>When you submit the form, this panel updates with the salary, an input-confidence heuristic, and the request timing.</p>
+              <ul>
+                <li>The result panel is sticky on wide screens, so the estimate stays visible while you work.</li>
+                <li>All form validation appears inline, before the request is sent.</li>
+                <li>Loading uses a skeleton that matches the final result layout instead of a generic spinner.</li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+    <footer class="footer">
+      <p class="list-note">Built for developers and tech professionals who want precision, clarity, and a refined visual hierarchy.</p>
+      <nav aria-label="Footer links">
+        <a href="/docs">API docs</a>
+        <a href="/api/v1/health">Health check</a>
+        <a href="#top">Back to top</a>
+      </nav>
+    </footer>
   </div>
-
   <script>
     const form = document.getElementById("salaryForm");
-    const resultBox = document.getElementById("result");
+    const resultPanel = document.getElementById("resultPanel");
     const predictBtn = document.getElementById("predictBtn");
-
-    function showResult(message, type, details = "") {
-      resultBox.className = `result ${type}`;
-      resultBox.innerHTML = details
-        ? `${message}<small>${details}</small>`
-        : message;
+    const resetBtn = document.getElementById("resetBtn");
+    const formStatus = document.getElementById("formStatus");
+    const resultState = document.getElementById("resultState");
+    const resultsTitle = document.getElementById("results-title");
+    const salaryValue = document.getElementById("salaryValue");
+    const salaryMeta = document.getElementById("salaryMeta");
+    const confidenceValue = document.getElementById("confidenceValue");
+    const confidenceBar = document.getElementById("confidenceBar");
+    const confidenceNote = document.getElementById("confidenceNote");
+    const latencyValue = document.getElementById("latencyValue");
+    const latencyNote = document.getElementById("latencyNote");
+    const resultsNote = document.getElementById("resultsNote");
+    const emptyState = document.getElementById("emptyState");
+    const fields = [
+      "Age",
+      "EdLevel",
+      "Employment",
+      "WorkExp",
+      "YearsCode",
+      "DevType",
+      "OrgSize",
+      "RemoteWork",
+      "Industry",
+      "Country",
+      "LanguageHaveWorkedWith",
+    ];
+    const labels = {
+      Age: "age range",
+      EdLevel: "education level",
+      Employment: "employment status",
+      WorkExp: "work experience",
+      YearsCode: "years coding",
+      DevType: "developer type",
+      OrgSize: "organization size",
+      RemoteWork: "remote work",
+      Industry: "industry",
+      Country: "country",
+      LanguageHaveWorkedWith: "languages worked with",
+    };
+    const defaultMessages = new Map();
+    document.querySelectorAll("[data-error-for]").forEach((node) => {
+      defaultMessages.set(node.getAttribute("data-error-for"), node.dataset.default || node.textContent.trim());
+    });
+    function setPanelState(state) {
+      resultPanel.dataset.state = state;
+      if (state === "loading") {
+        resultState.innerHTML = '<span class="pulse" aria-hidden="true"></span>Calculating';
+        formStatus.textContent = "Calculating your estimate. The interface is waiting for the model response.";
+        return;
+      }
+      if (state === "success") {
+        resultState.innerHTML = '<span class="pulse" aria-hidden="true"></span>Complete';
+        return;
+      }
+      if (state === "error") {
+        resultState.innerHTML = '<span class="pulse" aria-hidden="true"></span>Needs attention';
+        return;
+      }
+      resultState.innerHTML = '<span class="pulse" aria-hidden="true"></span>Idle';
     }
-
-    function resetForm() {
-      form.reset();
-      resultBox.className = "result";
-      resultBox.innerHTML = "";
+    function setFieldMessage(fieldId, message, isError = false) {
+      const fieldMessage = document.querySelector(`[data-error-for="${fieldId}"]`);
+      const input = document.getElementById(fieldId);
+      if (!fieldMessage || !input) return;
+      fieldMessage.textContent = message || defaultMessages.get(fieldId) || "";
+      fieldMessage.classList.toggle("is-error", Boolean(isError));
+      fieldMessage.classList.toggle("is-muted", !isError);
+      input.setAttribute("aria-invalid", isError ? "true" : "false");
     }
-
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-
-      const payload = {
+    function clearFieldMessages() {
+      fields.forEach((fieldId) => setFieldMessage(fieldId, defaultMessages.get(fieldId) || "", false));
+      formStatus.classList.remove("is-error", "is-success");
+    }
+    function validateField(fieldId) {
+      const input = document.getElementById(fieldId);
+      if (!input) return "";
+      const value = input.value.trim();
+      let message = "";
+      if (input.required && !value) {
+        message = `Please enter ${labels[fieldId] || "this field"}.`;
+      } else if ((fieldId === "WorkExp" || fieldId === "YearsCode") && value) {
+        const numericValue = Number(value);
+        if (!Number.isFinite(numericValue) || numericValue < 0 || numericValue > 60 || !Number.isInteger(numericValue)) {
+          message = "Enter a whole number between 0 and 60.";
+        }
+      } else if ((fieldId === "Country" || fieldId === "Industry") && value.length < 2) {
+        message = "Enter at least two characters.";
+      } else if (fieldId === "LanguageHaveWorkedWith" && value && !value.includes(";")) {
+        message = "Separate languages with semicolons, for example Python;SQL;JavaScript.";
+      }
+      setFieldMessage(fieldId, message || defaultMessages.get(fieldId) || "", Boolean(message));
+      return message;
+    }
+    function validateForm() {
+      const errors = [];
+      fields.forEach((fieldId) => {
+        const message = validateField(fieldId);
+        if (message) errors.push({ fieldId, message });
+      });
+      return errors;
+    }
+    function getPayload() {
+      return {
         Age: document.getElementById("Age").value,
         EdLevel: document.getElementById("EdLevel").value,
         Employment: document.getElementById("Employment").value,
@@ -476,42 +1387,182 @@
         Country: document.getElementById("Country").value.trim(),
         LanguageHaveWorkedWith: document.getElementById("LanguageHaveWorkedWith").value.trim(),
       };
-
+    }
+    function computeInputConfidence(payload) {
+      let score = 62;
+      const exactFields = ["Age", "EdLevel", "Employment", "DevType", "OrgSize", "RemoteWork"];
+      const exactMatches = exactFields.filter((fieldId) => Boolean(payload[fieldId])).length;
+      score += exactMatches * 3;
+      if (payload.WorkExp >= 1) score += 4;
+      if (payload.YearsCode >= payload.WorkExp) score += 2;
+      if (payload.Country.length >= 3) score += 4;
+      if (payload.Industry.length >= 3) score += 4;
+      if (payload.LanguageHaveWorkedWith.includes(";")) score += 5;
+      if (payload.LanguageHaveWorkedWith.split(";").filter(Boolean).length >= 3) score += 2;
+      return Math.max(48, Math.min(96, score));
+    }
+    function formatCurrency(value) {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      }).format(value);
+    }
+    function setLoadingSkeleton() {
+      resultPanel.dataset.state = "loading";
+      setPanelState("loading");
+      resultsTitle.textContent = "Calculating estimate";
+      salaryValue.textContent = "—";
+      salaryMeta.textContent = "The model is processing your profile.";
+      confidenceValue.textContent = "—";
+      confidenceBar.style.width = "22%";
+      confidenceNote.textContent = "Waiting for the backend response.";
+      latencyValue.textContent = "—";
+      latencyNote.textContent = "Timing will appear after the response returns.";
+      resultsNote.textContent = "Loading the estimate now. The skeleton matches the final layout so the panel never jumps.";
+      emptyState.hidden = true;
+    }
+    function setIdleState() {
+      resultPanel.dataset.state = "idle";
+      setPanelState("idle");
+      resultsTitle.textContent = "Ready for an estimate";
+      salaryValue.textContent = "—";
+      salaryMeta.textContent = "Submit the form to calculate a point estimate.";
+      confidenceValue.textContent = "—";
+      confidenceBar.style.width = "38%";
+      confidenceNote.textContent = "Heuristic based on schema fit and field completeness.";
+      latencyValue.textContent = "—";
+      latencyNote.textContent = "Measured from submit to response.";
+      resultsNote.textContent = "The backend returns a single point estimate. This interface surfaces that estimate clearly and labels the lack of a statistical interval so uncertainty stays visible.";
+      emptyState.hidden = false;
+    }
+    function setErrorState(detail, latencyText = "") {
+      resultPanel.dataset.state = "error";
+      setPanelState("error");
+      resultsTitle.textContent = "Prediction failed";
+      salaryValue.textContent = "—";
+      salaryMeta.textContent = detail || "The server returned an error.";
+      confidenceValue.textContent = "N/A";
+      confidenceBar.style.width = "12%";
+      confidenceNote.textContent = "Validation or backend issue. Check the message below.";
+      latencyValue.textContent = latencyText || "—";
+      latencyNote.textContent = "The request reached the backend, but the response failed.";
+      resultsNote.textContent = detail || "The server did not return a valid prediction.";
+      emptyState.hidden = true;
+    }
+    function setSuccessState(predictedSalary, confidence, elapsedMs) {
+      resultPanel.dataset.state = "success";
+      setPanelState("success");
+      resultsTitle.textContent = "Estimate generated";
+      salaryValue.textContent = formatCurrency(predictedSalary).replace("$", "");
+      salaryMeta.textContent = "Point estimate returned from the model.";
+      confidenceValue.textContent = `${confidence}%`;
+      confidenceBar.style.width = `${confidence}%`;
+      confidenceNote.textContent = "Heuristic based on schema match and field completeness.";
+      latencyValue.textContent = `${elapsedMs} ms`;
+      latencyNote.textContent = "Measured from submit to response.";
+      resultsNote.textContent = "The backend returns a single point estimate rather than a calibrated interval. The confidence meter reflects input quality, not statistical certainty.";
+      emptyState.hidden = true;
+    }
+    function markFirstError(errors) {
+      if (!errors.length) return;
+      const first = document.getElementById(errors[0].fieldId);
+      if (first) first.focus({ preventScroll: false });
+      formStatus.textContent = `Please fix ${errors.length} field${errors.length > 1 ? "s" : ""} before calculating the estimate.`;
+      formStatus.classList.add("is-error");
+    }
+    function syncValidationOnInput(event) {
+      const target = event.target;
+      if (!target || !target.id || !fields.includes(target.id)) return;
+      validateField(target.id);
+      const currentErrors = validateForm();
+      if (currentErrors.length === 0) {
+        formStatus.textContent = "All inputs look ready. Submit the form to generate an estimate.";
+        formStatus.classList.remove("is-error");
+        formStatus.classList.add("is-success");
+      }
+    }
+    fields.forEach((fieldId) => {
+      const input = document.getElementById(fieldId);
+      if (!input) return;
+      input.addEventListener("input", syncValidationOnInput);
+      input.addEventListener("change", syncValidationOnInput);
+      input.addEventListener("blur", () => validateField(fieldId));
+    });
+    resetBtn.addEventListener("click", () => {
+      form.reset();
+      clearFieldMessages();
+      setIdleState();
+      formStatus.textContent = "Ready. Complete the fields and submit to generate a salary estimate.";
+      formStatus.classList.remove("is-error", "is-success");
+    });
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearFieldMessages();
+      const errors = validateForm();
+      if (errors.length) {
+        markFirstError(errors);
+        errors.forEach(({ fieldId, message }) => setFieldMessage(fieldId, message, true));
+        setErrorState(`Please correct ${errors.length} field${errors.length > 1 ? "s" : ""} and try again.`);
+        return;
+      }
+      const payload = getPayload();
+      const startedAt = performance.now();
       predictBtn.disabled = true;
-      predictBtn.textContent = "Predicting...";
-
+      predictBtn.innerHTML = `
+        <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" />
+        </svg>
+        Calculating...
+      `;
+      setLoadingSkeleton();
       try {
         const response = await fetch("/api/v1/predict", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
-
         const data = await response.json();
-
         if (!response.ok) {
-          const detail = typeof data?.detail === "string"
-            ? data.detail
-            : JSON.stringify(data);
-          showResult("Prediction failed.", "error", detail);
+          const detail = typeof data?.detail === "string" ? data.detail : "The prediction request failed.";
+          const elapsed = Math.max(1, Math.round(performance.now() - startedAt));
+          setErrorState(detail, `${elapsed} ms`);
+          formStatus.textContent = detail;
+          formStatus.classList.add("is-error");
           return;
         }
-
-        const salary = Number(data.predicted_salary ?? data.prediction ?? 0);
-        showResult(
-          `Predicted annual salary: ${salary.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })}`,
-          "success",
-          "This is the model's estimate for the entered developer profile."
-        );
+        const salary = Number(data.predicted_salary ?? data.prediction ?? NaN);
+        if (!Number.isFinite(salary)) {
+          const elapsed = Math.max(1, Math.round(performance.now() - startedAt));
+          setErrorState("The backend returned an invalid salary value.", `${elapsed} ms`);
+          formStatus.textContent = "The backend returned an invalid salary value.";
+          formStatus.classList.add("is-error");
+          return;
+        }
+        const elapsed = Math.max(1, Math.round(performance.now() - startedAt));
+        const confidence = computeInputConfidence(payload);
+        setSuccessState(salary, confidence, elapsed);
+        formStatus.textContent = "Estimate generated successfully.";
+        formStatus.classList.remove("is-error");
+        formStatus.classList.add("is-success");
       } catch (error) {
         console.error(error);
-        showResult("A network or server error occurred.", "error", "Check that the FastAPI app is running and the model file exists.");
+        const elapsed = Math.max(1, Math.round(performance.now() - startedAt));
+        setErrorState("Connection failed. Please confirm that the FastAPI app is running and the model file exists.", `${elapsed} ms`);
+        formStatus.textContent = "Connection failed. Please confirm that the FastAPI app is running and the model file exists.";
+        formStatus.classList.add("is-error");
       } finally {
         predictBtn.disabled = false;
-        predictBtn.textContent = "Predict Salary";
+        predictBtn.innerHTML = `
+          <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" />
+          </svg>
+          Calculate estimate
+        `;
       }
     });
+    clearFieldMessages();
+    setIdleState();
   </script>
 </body>
 </html>
-

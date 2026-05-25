@@ -59,7 +59,7 @@ The following are photos of my frontend interface.
 | Frontend interface                                    |
 |--------------------------------------------------------|
 | ![Frontend interface](PHOTOS/dash1.png) |
-|--------------------------------------------------------|
+
 |Frontend interface|
 | ![Frontend interface](PHOTOS/dash2.png)|
 
