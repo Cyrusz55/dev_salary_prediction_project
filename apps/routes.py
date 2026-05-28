@@ -20,18 +20,22 @@ def health_check():
 @router.post("/predict", response_model=PredictionResponse)
 def predict(salary: DevSalaryInput):
     try:
+        print(f"DEBUG: Loading model...")
         model = load_model()
+        print(f"DEBUG: Model loaded. Input: {salary.model_dump()}")
         new_data = pd.DataFrame([salary.model_dump()])
-        # Model predicts in log scale, convert back to actual salary
+        print(f"DEBUG: DataFrame created: {new_data.columns.tolist()}")
         log_prediction = predict_new_salary(model, new_data)[0]
-        actual_salary = np.expm1(log_prediction)  # Inverse of log1p
+        print(f"DEBUG: Prediction made: {log_prediction}")
+        actual_salary = np.expm1(log_prediction)
         return PredictionResponse(predicted_salary=float(actual_salary))
-    except FileNotFoundError:
-        raise HTTPException(
-            status_code = 503,
-            detail="Model not yet trained. Run training first.",
-        )
+    except FileNotFoundError as e:
+        print(f"DEBUG: FileNotFoundError: {e}")
+        raise HTTPException(status_code=503, detail="Model not found")
     except Exception as e:
+        print(f"DEBUG: Exception: {type(e).__name__}: {e}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/model-info")
