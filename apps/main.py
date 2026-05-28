@@ -36,9 +36,10 @@ def startup_event():
     try:
         # Try to download model from HuggingFace
         model_path = hf_hub_download(
-            repo_id="YOUR_HF_USERNAME/salary-model",
+            repo_id="cyrusnx/salary-model",
             filename="dev_salary_model.joblib",
-            cache_dir="models"
+            cache_dir="models",
+            token=os.getenv("HF_TOKEN")
         )
         print(f"Model downloaded from HuggingFace: {model_path}")
     except Exception as e:
