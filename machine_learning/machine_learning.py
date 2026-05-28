@@ -88,10 +88,25 @@ def train_model(df: pd.DataFrame):
     return model, X_test, y_test
 def predict_new_salary(model, new_data: pd.DataFrame):
     return model.predict(new_data)
+
+
 def load_model():
-    if not os.path.exists(MODEL_PATH):
-        raise FileNotFoundError(f"Model file not found at {MODEL_PATH}")
-    return joblib.load(MODEL_PATH)
+    from pathlib import Path
+
+    # Try local first
+    local_path = Path("models/dev_salary_model.joblib")
+    if local_path.exists():
+        return joblib.load(local_path)
+
+    # Try HuggingFace cache
+    cache_path = Path("models/models--cyrusnx--salary-model/snapshots")
+    if cache_path.exists():
+        # Get the latest snapshot
+        snapshots = list(cache_path.glob("*/dev_salary_model.joblib"))
+        if snapshots:
+            return joblib.load(snapshots[0])
+
+    raise FileNotFoundError("Model file not found")
 def predict_single(input_data: dict):
     model = load_model()
     df = pd.DataFrame([input_data])
